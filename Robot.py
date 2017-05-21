@@ -17,6 +17,8 @@ import time
 			timeOfInit = datetime.datetime.now()
 			
 			pf.findPath()
+		else
+			time.sleep(1)
 
 
 
