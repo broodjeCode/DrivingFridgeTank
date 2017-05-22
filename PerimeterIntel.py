@@ -13,7 +13,8 @@ class PerimeterIntel
 
 
 
-
+	def getObjectInSIght
+		return ImageProcessor.objectInSight
 
 	def getDistLeft()
 		return 

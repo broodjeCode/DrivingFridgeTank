@@ -1,7 +1,7 @@
 class MovementProcessor
 
 
-	execComm = false
+	execComm = False
 
 
 	hb = HBridge()

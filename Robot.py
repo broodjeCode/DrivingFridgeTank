@@ -1,8 +1,8 @@
 class Robot
 import time
 
-	
-	inOperation = false
+	serviceRequest = False
+	inOperation = False
 
 
 	pf = Pathfinder()
@@ -12,8 +12,8 @@ import time
 	while(true)
 		
 		if(serviceRequest && !inOperation)
-			serviceRequest = false
-			inOperation = true
+			serviceRequest = False
+			inOperation = True
 			timeOfInit = datetime.datetime.now()
 			
 			pf.findPath()

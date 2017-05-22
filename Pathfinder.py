@@ -3,7 +3,7 @@ class Pathfinder
 	timesTurned = 0
 	distLeft = 0
 	distRight = 0
-	operational = false
+	operational = False
 
 	PerimeterIntel = PerimeterIntel()
 	MovementProcessor = MovementProcessor()
@@ -12,19 +12,19 @@ class Pathfinder
 
 
 	def startPathfinder(self)
-		operational = true
+		operational = True
 		mainOp()
 
 
 	def cancelPathfinder(self)
-		operational = false
+		operational = False
 
 
 	def mainOp(self)
 
-		while(operational)
-			
-			distLeft  = PerimeterIntel.getDistLeft()
-			distRight = PerimeterIntel.getDistRight()
+		if(!operational)
+			break
+		distLeft  = PerimeterIntel.getDistLeft()
+		distRight = PerimeterIntel.getDistRight()
 
 	def findTarget
