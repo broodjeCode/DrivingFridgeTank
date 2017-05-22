@@ -11,7 +11,7 @@ import time
 	#loop
 	while(true)
 		
-		if(serviceRequest)
+		if(serviceRequest && !inOperation)
 			serviceRequest = false
 			inOperation = true
 			timeOfInit = datetime.datetime.now()
