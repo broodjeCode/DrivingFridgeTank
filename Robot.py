@@ -1,9 +1,9 @@
-class Robot
 import time
+import Ultrasone
 
+class Robot():
 	serviceRequest = False
 	inOperation = False
-
 
 	pf = Pathfinder()
 

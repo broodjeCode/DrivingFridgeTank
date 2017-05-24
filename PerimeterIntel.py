@@ -1,3 +1,5 @@
+import Ultrasone
+
 class PerimeterIntel
 
 	isWallFront = False
