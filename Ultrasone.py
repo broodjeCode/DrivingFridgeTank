@@ -4,8 +4,9 @@ import RPi.GPIO as GPIO
 import time
 import math
 from array import *
+from multiprocessing import Process
 
-class Ultrasone():
+class Ultrasone(Process):
 	def __init__(self):
                 self.debug=False
 		GPIO.setmode(GPIO.BOARD)
@@ -18,6 +19,13 @@ class Ultrasone():
 		GPIO.setup(self.TRIG, GPIO.OUT)
 		GPIO.output(self.TRIG, 0)
 		GPIO.setup(self.ECHO, GPIO.IN)
+
+	def run(self, mq):
+		while True:
+			self.distance=self.PrivGetDist()
+			if self.debug:
+				print "Distance: %s cm" % self.distance
+			mq.value=self.distance  #float(self.distance)
 
 
 	## https://github.com/rsc1975/micropython-hcsr04/blob/master/hcsr04.py
@@ -34,7 +42,7 @@ class Ultrasone():
                 return (time.time() - start)
 
 
-	def getDist(self):
+	def PrivGetDist(self):
 		
 		i=0
 		results = [] #array()
@@ -42,27 +50,19 @@ class Ultrasone():
 		while i<5:
                         i=i+1
 			var = self.getRawData()
-			if (var != None): # && niet buitengewoon groot of klein na vorige meting?
+			if (var >=0 ): # && niet buitengewoon groot of klein na vorige meting?
 				results.append(var)
-
-#		i=1
-#		for i in results: ## Check if value is positive, otherwise error
-#	                print 
-#			if int(results[i]) <= 0:
-#				print "ERROR"
-#				return 0
 
 		fResults=[float(i) for i in results] ## convert values to a nice float
 		avgRaw = sum(fResults) / float(len(fResults))
 		avgCM = avgRaw * 17000
-#		avgCM = (fResults[1] / 2) / 29.1
 
 		if (self.debug):
 			for i in results:
 				print(i),
 				print(str(results)),
 
-		return avgCM
+		return avgCM ## Return calculated value
 
 
 	def getRawData(self):
@@ -72,30 +72,6 @@ class Ultrasone():
                 GPIO.output(TRIG, 1)
        		time.sleep(0.00001)
         	GPIO.output(TRIG, 0)
-       		pulse_time = self.get_pulse_time(ECHO, 1, 0.900)
-
-		print str(pulse_time)
+       		pulse_time = self.get_pulse_time(ECHO, 1, 0.050)
 
 		return str(pulse_time)
-
-		#marco
-#		GPIO.output(TRIG, 1)
-#		time.sleep(0.00001)
-#		GPIO.output(TRIG, 0)
-#
-#                print "aids"
-#		#polo
-#		while GPIO.input(ECHO) == 0:
-#			pass
-#		start = time.time()
-#	
-#		while GPIO.input(ECHO) == 1:
-#			pass
-#		stop = time.time()
-#
-#		return (stop - start)
-
-
-
-distance=Ultrasone()
-print distance.getDist()
