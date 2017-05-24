@@ -12,9 +12,9 @@ from collections import deque
 
 
 class cameraThread(Process):
-        def __init__(self, args):
+        def __init__(self,args): ## setup Program variables from args (from parents argparser)
                 self.debug=args["cdebug"]
-		self.daemon=args["daemon"]
+		self.setdaemon=args["daemon"]
 		self.pwidth=args["pwidth"]
 		self.pheight=args["pheight"]
 		self.cwidth=args["cwidth"]
@@ -22,8 +22,12 @@ class cameraThread(Process):
 		self.cdebug=args["cdebug"]
 		self.buffer=args["buffer"]
 
-	def cameraThread(self):
-		try:
+	def nothing(self,na):
+		pass
+
+
+	def run(self,cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY):
+#		try:
 			with picamera.PiCamera() as camera:
 				with picamera.array.PiRGBArray(camera) as stream:
 					## Setup camera capture resolution
@@ -32,7 +36,7 @@ class cameraThread(Process):
 					## setup vars from args
 					cameraResolution=(self.cwidth,self.cheight)
 					processingResolution=(self.pwidth,self.pheight)
-					daemon=self.daemon
+					daemon=self.setdaemon
 					debug=self.cdebug
 					pts = deque(maxlen=self.buffer)
 
@@ -45,12 +49,12 @@ class cameraThread(Process):
 					vh='Value High'
 					vl='Value Low'
 					wnd = 'Colorbars'
-					cv2.createTrackbar(hl, wnd,155,179,nothing)
-					cv2.createTrackbar(hh, wnd,179,179,nothing)
-					cv2.createTrackbar(sl, wnd,123,255,nothing)
-					cv2.createTrackbar(sh, wnd,255,255,nothing)
-					cv2.createTrackbar(vl, wnd,72,255,nothing)
-					cv2.createTrackbar(vh, wnd,190,255,nothing)
+					cv2.createTrackbar(hl, wnd,0,179,self.nothing)
+					cv2.createTrackbar(hh, wnd,3,179,self.nothing)
+					cv2.createTrackbar(sl, wnd,253,255,self.nothing)
+					cv2.createTrackbar(sh, wnd,255,255,self.nothing)
+					cv2.createTrackbar(vl, wnd,57,255,self.nothing)
+					cv2.createTrackbar(vh, wnd,110,255,self.nothing)
 
 					while True: ## LOOP
 						## reset empty vars
@@ -119,6 +123,7 @@ class cameraThread(Process):
 								cv2.circle(frame, center, 5, (0, 0, 255), -1)
 						else:
 							objectDetected=False
+							center=(0,0)
 						pts.appendleft(center)
 
 						## Print location to console relative to image resolution from topleft to bottom right
@@ -145,10 +150,18 @@ class cameraThread(Process):
 
 						## publish data to queue
 #						ocvQueue.put([cameraResolution, processingResolution, objectLocation, objectDetected, radius])
+						cameraResolutionValueX.value=cameraResolution[0]
+						cameraResolutionValueY.value=cameraResolution[1]
+						processingResolusionValueX.value=processingResolution[0]
+						processingResolusionValueY.value=processingResolution[1]
+						objectRadiusValue.value=radius
+						objectDetectValue.value=objectDetected
+						objectLocationValueX.value=objectLocation[0]
+						objectLocationValueY.value=objectLocation[1]
 
 						# reset the stream before the next capture
 						stream.seek(0)
 						stream.truncate()
 					raise Exception('Quit')
-		except :
-			print "cameraThread() CTRL+C"
+#		except :
+#			print "cameraThread() CTRL+C"

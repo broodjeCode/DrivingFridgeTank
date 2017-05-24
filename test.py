@@ -37,24 +37,23 @@ def main():
 
 	manager = Manager()
 
-
         ## Define shared Values (for SMP/Threading IPC)
 	distanceValue=Value('d',0)
 	cameraResolutionValueX=Value('d',0)
 	processingResolusionValueX=Value('d',0)
         cameraResolutionValueY=Value('d',0)
         processingResolusionValueY=Value('d',0)
+	objectDetectValue=Value('d',0)
 	objectRadiusValue=Value('d',0)
 	objectLocationValueX=Value('d',0)
         objectLocationValueY=Value('d',0)
 
-
-
 	ultra=Ultrasone.Ultrasone()
-	camera=Camera.cameraThread()
 	sensorThread=Process(target=ultra.run, args=(distanceValue,))
-	cameraThread=Process(target=camera.run, args=(args,))
 	sensorThread.start()
+	camera=Camera.cameraThread(args)
+	cameraThread=Process(target=camera.run, args=(cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,))
+	cameraThread.start()
 
 
 
@@ -63,8 +62,17 @@ def main():
 
 	try:
 		while(1):
-			sleep(0.001)
-			print "swek %s" % distanceValue.value
+			sleep(0.1)
+			print "BOT Statistics:"
+			print "Ultrasone distance %s" % distanceValue.value
+			print "Camera Resolution: %sx%s" % (cameraResolutionValueX.value, cameraResolutionValueY.value)
+			print "Processing Resolution: %sx%s" % (processingResolusionValueX.value, processingResolusionValueY.value)
+			print ""
+			print "Object Statistics:"
+			print "Object detected: %s"  % objectDetectValue.value
+			print "Object Radius: %s" % objectRadiusValue.value
+			print "Object Location: x:%s y:%s" % (objectLocationValueX.value, objectLocationValueY.value)
+			
 
 	except KeyboardInterrupt:
 		print "CTRL+C Shutting down..."

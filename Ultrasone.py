@@ -7,15 +7,18 @@ from array import *
 from multiprocessing import Process
 
 class Ultrasone(Process):
-	def __init__(self):
-                self.debug=False
+	def __init__(self, args):
+                self.debug=args["sdebug"]
 		GPIO.setmode(GPIO.BOARD)
 		#if left !exist
+
+
+		## Ultrasone pins
 		self.TRIG = 7
 		self.ECHO = 12
 		#else andere pins
-		
 
+		## Setup GPIO
 		GPIO.setup(self.TRIG, GPIO.OUT)
 		GPIO.output(self.TRIG, 0)
 		GPIO.setup(self.ECHO, GPIO.IN)
