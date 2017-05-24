@@ -12,22 +12,29 @@ from collections import deque
 
 
 class cameraThread(Process):
-        def __init__(self):
-                self.debug=False
+        def __init__(self, args):
+                self.debug=args["cdebug"]
+		self.daemon=args["daemon"]
+		self.pwidth=args["pwidth"]
+		self.pheight=args["pheight"]
+		self.cwidth=args["cwidth"]
+		self.cheight=args["cheight"]
+		self.cdebug=args["cdebug"]
+		self.buffer=args["buffer"]
 
-	def cameraThread(self, args):
+	def cameraThread(self):
 		try:
 			with picamera.PiCamera() as camera:
 				with picamera.array.PiRGBArray(camera) as stream:
 					## Setup camera capture resolution
-					camera.resolution = (args["cwidth"],args["cheight"])
+					camera.resolution = (self.cwidth,self.cheight)
 	
 					## setup vars from args
-					cameraResolution=(args["cwidth"],args["cheight"])
-					processingResolution=(args["pwidth"],args["pheight"])
-					daemon=args["daemon"]
-					debug=args["cdebug"]
-					pts = deque(maxlen=args["buffer"])
+					cameraResolution=(self.cwidth,self.cheight)
+					processingResolution=(self.pwidth,self.pheight)
+					daemon=self.daemon
+					debug=self.cdebug
+					pts = deque(maxlen=self.buffer)
 
 					## create window colorbars
 					cv2.namedWindow('Colorbars')
@@ -64,7 +71,7 @@ class cameraThread(Process):
 
 						# stream.array now contains the image data in BGR order
 						frame = stream.array
-						frame = imutils.resize(frame, width=args["pwidth"], height=args["pheight"])
+						frame = imutils.resize(frame, width=self.pwidth, height=self.pheight)
 
 						blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 						if debug:
@@ -126,7 +133,7 @@ class cameraThread(Process):
 
 								# otherwise, compute the thickness of the line and
 								# draw the connecting lines
-								thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
+								thickness = int(np.sqrt(self.buffer / float(i + 1)) * 2.5)
 								cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 
