@@ -28,3 +28,7 @@ class Pathfinder
 		distRight = PerimeterIntel.getDistRight()
 
 	def findTarget
+		pass
+
+	def centerCamera
+		pass

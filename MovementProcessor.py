@@ -17,3 +17,11 @@ class MovementProcessor
 
 	def stopTurn(self)
 		pass
+
+
+	def enableRelay(self, side, mode)
+		pass
+
+
+	def setHBridge(self, side, mode)
+		pass

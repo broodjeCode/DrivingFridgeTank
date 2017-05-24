@@ -10,9 +10,11 @@ class Ultrasone
 	def __init__(self):
 
 		GPIO.setmode(GPIO.BOARD)
-
+		#if left !exist
 		TRIG = 7
 		ECHO = 12
+		#else andere pins
+		
 
 		GPIO.setup(TRIG, GPIO.OUT)
 		GPIO.output(TRIG, 0)
@@ -26,15 +28,19 @@ class Ultrasone
 		
 		while i<5
 			var = getRawData()
-			if (var != NULL)
+			if (var != NULL) # && niet buitengewoon groot of klein na vorige meting?
 				results.append(var)
-			avgRaw = sum(results) / float(len(results))
-			avgCM = avgRaw * 17000
+		avgRaw = sum(results) / float(len(results))
+		avgCM = avgRaw * 17000
 
 		if (debug)
 			for i in results:
 				print(i),
 				print(results[i]),
+
+		return avgCM
+
+
 
 
 

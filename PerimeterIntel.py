@@ -1,5 +1,12 @@
 class PerimeterIntel
 
+	isWallFront = False
+	isWallLeft = False
+	isWallRight = False
+
+
+
+
 	UltrasoneLeft = Ultrasone()
 	UltrasoneRight = Ultrasone()
 	ip = ImageProcessor()
@@ -7,9 +14,7 @@ class PerimeterIntel
 	def __init__(self):
 
 
-	while(true)
-		UltrasoneLeft.getDist()
-		UltrasoneRight.getDist()
+	
 
 
 
@@ -21,3 +26,11 @@ class PerimeterIntel
 
 	def getDistRight()
 		pass
+
+
+
+
+
+	while(true)
+		UltrasoneLeft.getDist()
+		UltrasoneRight.getDist()
