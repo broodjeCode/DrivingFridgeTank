@@ -89,9 +89,6 @@ class Ultrasone(Process):
 
 
 	def getRawData(self, ECHO, TRIG):
-                TRIG
-                ECHO
-
                 GPIO.output(TRIG, 1)
        		time.sleep(0.00001)
         	GPIO.output(TRIG, 0)
