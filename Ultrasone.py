@@ -66,7 +66,7 @@ class Ultrasone(Process):
 		i=0
 		results = [] #array()
 		
-		while i<5:
+		while i<3:
                         i=i+1
 			var = self.getRawData(ECHO, TRIG)
 			if (var >=0 ): # && niet buitengewoon groot of klein na vorige meting?
@@ -95,6 +95,6 @@ class Ultrasone(Process):
                 GPIO.output(TRIG, 1)
        		time.sleep(0.00001)
         	GPIO.output(TRIG, 0)
-       		pulse_time = self.get_pulse_time(ECHO, 1, 0.050)
+       		pulse_time = self.get_pulse_time(ECHO, 1, 0.010)
 
 		return str(pulse_time)
