@@ -1,10 +1,8 @@
 from multiprocessing import Process, Queue, Manager, Value, Array
 from time import sleep as sleep
-import argparse
-
 import Ultrasone
 import Camera
-import PerimeterIntel
+import argparse
 
 ## set program version
 pName="test"
@@ -54,20 +52,13 @@ def main():
 	ultrasoneLoopTime=Value('f',1)
 
 	## Initialize and start processes
-        # Ultrasone distance sensors
 	ultra=Ultrasone.Ultrasone(args)
 	sensorThread=Process(target=ultra.run, args=(distanceLValue,distanceRValue,ultrasoneLoopTime,))
 	sensorThread.start()
-
-	# OpenCV Image processing
 	camera=Camera.cameraThread(args)
 	cameraThread=Process(target=camera.run, args=(cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,cameraLoopTime,))
 	cameraThread.start()
 
-	# PerimeterIntel magick
-	perIntel=PerimeterIntel.PerimeterIntel(ultra,camera)
-	perIntelThread=Process(target=perIntel.run)
-	perIntelThread.start()
 
 
 
@@ -75,7 +66,7 @@ def main():
 
 	try:
 		while(1):
-			sleep(2)
+			sleep(0.1)
 			print "BOT Statistics:"
 			print "Ultrasone distance L:%i cm R:%i cm" % ( int(distanceLValue.value), int(distanceRValue.value) )
 			print "Ultrasone samples per second: %s" % (((1/ultrasoneLoopTime.value)*3 )*2 )

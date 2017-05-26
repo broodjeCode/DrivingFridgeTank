@@ -6,11 +6,11 @@ import math
 from array import *
 from multiprocessing import Process
 
-
 class Ultrasone(Process):
 	def __init__(self, args):
-		self.distance=[0,0,0]
+		self.distanceL=0
 		self.loopCompletedTime=1
+		self.distanceR=0
                 self.debug=args["sdebug"]
 		GPIO.setmode(GPIO.BOARD)
 		#if left !exist
@@ -33,20 +33,16 @@ class Ultrasone(Process):
 		GPIO.setup(self.ECHO2, GPIO.IN)
 		GPIO.output(self.TRIG2, 0)
 
-	def getDist(self):
-		print str(self.distance)
-		return self.distance
-
 	def run(self, mqL, mqR, loopTime):
 		while True:
 			self.loopStartTime=time.time()  ## save loop speed
-			self.distance[0]=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distance[0])
-			self.distance[1]=self.PrivGetDist(self.ECHO2, self.TRIG2, self.distance[1])
+			self.distanceL=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distanceL)
+			self.distanceR=self.PrivGetDist(self.ECHO2, self.TRIG2, self.distanceR)
 
 			if self.debug:
 				print "Distance: %s cm" % self.distance
-			mqL.value=self.distance[0]  #float(self.distance)
-			mqR.value=self.distance[1]  # Right sensor
+			mqL.value=self.distanceL  #float(self.distance)
+			mqR.value=self.distanceR  # Right sensor
 			self.loopCompletedTime=(time.time() - self.loopStartTime) ## calculate loop speed
 			loopTime.value=self.loopCompletedTime
 
