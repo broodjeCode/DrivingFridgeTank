@@ -10,7 +10,7 @@ import PerimeterIntel
 pName="test"
 pVersion="0.1"
 
-def main():
+def main():  #link naar argument parser page, uit ball tracking code
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-d", "--daemon", help="daemonize program", type=bool, default=False)
 	ap.add_argument("-D", "--debug", help="general program debugging", type=bool, default=False)
@@ -69,8 +69,9 @@ def main():
 	dataUpdateSpeed=1
 	try:
 		while True:	## Main loop for basic stuff and data transmissions between threads
-
+			#DATABROKER - if lastDateUpdate is lower than current epoch time, rephresh
 			if lastDataUpdate+dataUpdateSpeed < time.time():
+				#set current epoch
 				lastDataUpdate=time.time()
 				print "---DATAUPDATE---"
 				## Data handling/ipc shizzle
@@ -84,6 +85,7 @@ def main():
 
 			if lastDisplayUpdate+displayUpdateSpeed < time.time(): ## make sure not to delay the main loop, sure i could use sleep but that's a loss of cycles.... but you allready knew that.
 			#sleep(0.1)
+				#rephresh lastDisplayUpdate to current epoch time
 				lastDisplayUpdate=time.time()
 				print "lastDisplayUpdate: %s next: %s)" % (lastDisplayUpdate, (time.time()+displayUpdateSpeed))
 				print "BOT Statistics:"
