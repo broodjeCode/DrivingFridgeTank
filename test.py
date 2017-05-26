@@ -78,10 +78,10 @@ def main():
 			sleep(2)
 			print "BOT Statistics:"
 			print "Ultrasone distance L:%i cm R:%i cm" % ( int(distanceLValue.value), int(distanceRValue.value) )
-			print "Ultrasone samples per second: %s" % (((1/ultrasoneLoopTime.value)*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
+			print "Ultrasone samples per second: %s" % (((1/ultrasoneLoopTime.value)*3 )*2 )
 			print "Camera Resolution: %sx%s" % (cameraResolutionValueX.value, cameraResolutionValueY.value)
 			print "Image Processing Resolution: %sx%s" % (processingResolusionValueX.value, processingResolusionValueY.value)
-			print "Image Processing speed: %s fps" % (1/cameraLoopTime.value) ## 1/looptime = opencv thread fps
+			print "Image Processing speed: %s fps" % (1/cameraLoopTime.value)
 			print ""
 			print "Object Statistics:"
 			print "Object detected: %s"  % objectDetectValue.value
