@@ -1,8 +1,10 @@
 from multiprocessing import Process, Queue, Manager, Value, Array
 import time
+import argparse
+
 import Ultrasone
 import Camera
-import argparse
+import PerimeterIntel
 
 ## set program version
 pName="test"
@@ -35,50 +37,68 @@ def main():
 
 	time.sleep(2)
 
-	manager = Manager()
-
-        ## Define shared Values (for SMP/Threading IPC)
-	UltrasoneData=Array('f', range(4));
-	CameraData=Array('f', range(9) )
-	
+        ## Init Data arrays for trasferring data over smp threads (somewhat simple IPC)
+	UltrasoneDataOut=Array('f', range(4))
+	CameraDataOut=Array('f', range(9))
+	PerIntelDataIn=Array('f', range(3))
+	PerIntelDataOut=Array('f', range(1))
 
 	## Initialize and start processes
+
+	# UltrasoneThread
 	ultra=Ultrasone.Ultrasone(args)
-	sensorThread=Process(target=ultra.run, args=(UltrasoneData,))
+	sensorThread=Process(target=ultra.run, args=(UltrasoneDataOut,))
 	sensorThread.start()
 
+	# CameraThread
 	camera=Camera.cameraThread(args)
-	cameraThread=Process(target=camera.run, args=(CameraData,))
+	cameraThread=Process(target=camera.run, args=(CameraDataOut,))
 	cameraThread.start()
 
+	# PerimeterIntelThread
+	perIntel=PerimeterIntel.PerimeterIntel(args)
+	perIntelThread=Process(target=perIntel.run, args=(PerIntelDataIn, PerIntelDataOut,)) ## Initialize PerIntelThread and parse PerIntelDataIn and PerIntelDataOut
+	perIntelThread.start()
 
 
 
 
 	lastDisplayUpdate=0
 	updateSpeed=1
-#	try:
-	while(1):
+	try:
+		while(1):	## Main loop for basic stuff and data transmissions between threads
+
+			## Data handling/ipc shizzle
+			# PerIntelDataIn:
+			PerIntelDataIn[0]=UltrasoneDataOut[0]
+			PerIntelDataIn[1]=UltrasoneDataOut[1]
+			PerIntelDataIn[2]=UltrasoneDataOut[2]
+
+
+
+
 			if lastDisplayUpdate+updateSpeed < time.time(): ## make sure not to delay the main loop, sure i could use sleep but that's a loss of cycles.... but you allready knew that.
 			#sleep(0.1)
 				lastDisplayUpdate=time.time()
 				print "lastDisplayUpdate: %s next: %s)" % (lastDisplayUpdate, (time.time()+updateSpeed))
 				print "BOT Statistics:"
-				print "Ultrasone distance L:%i cm F:%s cm R:%i cm" % ( int(UltrasoneData[0]), int(UltrasoneData[2]), int(UltrasoneData[1]) )
-				print "Ultrasone samples per second: %s" % ( ( (1/UltrasoneData[3])*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
-				print "Camera Resolution: %sx%s" % (CameraData[0], CameraData[1])
-				print "Image Processing Resolution: %sx%s" % (CameraData[2], CameraData[3])
-				print "Image Processing speed: %s fps" % (1/CameraData[8]) ## 1/looptime = opencv thread fps
+				print "Ultrasone distance L:%i cm F:%s cm R:%i cm" % ( int(UltrasoneDataOut[0]), int(UltrasoneDataOut[2]), int(UltrasoneDataOut[1]) )
+				print "Ultrasone samples per second: %s" % ( ( (1/UltrasoneDataOut[3])*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
+				print "Camera Resolution: %sx%s" % (CameraDataOut[0], CameraDataOut[1])
+				print "Image Processing Resolution: %sx%s" % (CameraDataOut[2], CameraDataOut[3])
+				print "Image Processing speed: %s fps" % (1/CameraDataOut[8]) ## 1/looptime = opencv thread fps
 				print ""
 				print "Object Statistics:"
-				print "Object detected: %s"  % CameraData[4]
-				print "Object Radius: %s" % CameraData[5]
-				print "Object Location: x:%s y:%s" % (CameraData[6], CameraData[7])
+				print "Object detected: %s"  % CameraDataOut[4]
+				print "Object Radius: %s" % CameraDataOut[5]
+				print "Object Location: x:%s y:%s" % (CameraDataOut[6], CameraDataOut[7])
 			
 
-#	except KeyboardInterrupt:
-#		print "CTRL+C Shutting down..."
-#		sensorThread.join()
+	except KeyboardInterrupt:
+		print "CTRL+C Shutting down..."
+		sensorThread.join()
+		cameraThread.join()
+		perIntelThread.join()
 
 if __name__ == '__main__':
 	main()
