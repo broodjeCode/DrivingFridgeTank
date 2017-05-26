@@ -10,7 +10,7 @@ import imutils
 from collections import deque
 
 
-class cameraThread(Process):
+class ImageProcessor(Process):
         def __init__(self,args): ## setup Program variables from args (from parents argparser)
 		self.loopCompletedTime=1
                 self.debug=args["cdebug"]
