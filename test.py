@@ -3,7 +3,7 @@ import time
 import argparse
 
 import Ultrasone
-import Camera
+import ImageProcessor
 import PerimeterIntel
 
 ## set program version
@@ -51,7 +51,7 @@ def main():  #link naar argument parser page, uit ball tracking code
 	sensorThread.start()
 
 	# CameraThread
-	camera=Camera.cameraThread(args)
+	camera=ImageProcessor.ImageProcessor(args)
 	cameraThread=Process(target=camera.run, args=(CameraDataOut,))
 	cameraThread.start()
 
