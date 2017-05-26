@@ -69,11 +69,8 @@ def main():  #link naar argument parser page, uit ball tracking code
 	dataUpdateSpeed=0.1
 	try:
 		while True:	## Main loop for basic stuff and data transmissions between threads
-<<<<<<< HEAD
 			time.sleep(0.001) ## don't hog the cpu
-=======
 			#DATABROKER - if lastDateUpdate is lower than current epoch time, rephresh
->>>>>>> 9a48b53cbfb7b8a5fbdff17ab158c775f3d800bd
 			if lastDataUpdate+dataUpdateSpeed < time.time():
 				#set current epoch
 				lastDataUpdate=time.time()
