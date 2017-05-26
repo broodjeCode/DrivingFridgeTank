@@ -1,5 +1,5 @@
 from multiprocessing import Process, Queue, Manager, Value, Array
-from time import sleep as sleep
+import time
 import Ultrasone
 import Camera
 import argparse
@@ -33,56 +33,52 @@ def main():
 	print "--pheight:   %s" % str(args["pheight"])
 	print "--buffer:    %s" % str(args["buffer"])
 
-	sleep(2)
+	time.sleep(2)
 
 	manager = Manager()
 
         ## Define shared Values (for SMP/Threading IPC)
-	distanceLValue=Value('f',0)
-	distanceRValue=Value('f',0)
-	cameraResolutionValueX=Value('i',0)
-	processingResolusionValueX=Value('i',0)
-        cameraResolutionValueY=Value('i',0)
-        processingResolusionValueY=Value('i',0)
-	objectDetectValue=Value('b',0)
-	objectRadiusValue=Value('d',0)
-	objectLocationValueX=Value('i',0)
-        objectLocationValueY=Value('i',0)
-	cameraLoopTime=Value('f',1) ## default 1 to prevent float devision by zero (sorry :))
-	ultrasoneLoopTime=Value('f',1)
+	UltrasoneData=Array('f', range(4));
+	CameraData=Array('f', range(9) )
+	
 
 	## Initialize and start processes
 	ultra=Ultrasone.Ultrasone(args)
-	sensorThread=Process(target=ultra.run, args=(distanceLValue,distanceRValue,ultrasoneLoopTime,))
+	sensorThread=Process(target=ultra.run, args=(UltrasoneData,))
 	sensorThread.start()
+
 	camera=Camera.cameraThread(args)
-	cameraThread=Process(target=camera.run, args=(cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,cameraLoopTime,))
+	cameraThread=Process(target=camera.run, args=(CameraData,))
 	cameraThread.start()
 
 
 
 
 
-
-	try:
-		while(1):
-			sleep(0.1)
-			print "BOT Statistics:"
-			print "Ultrasone distance L:%i cm R:%i cm" % ( int(distanceLValue.value), int(distanceRValue.value) )
-			print "Ultrasone samples per second: %s" % (((1/ultrasoneLoopTime.value)*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
-			print "Camera Resolution: %sx%s" % (cameraResolutionValueX.value, cameraResolutionValueY.value)
-			print "Image Processing Resolution: %sx%s" % (processingResolusionValueX.value, processingResolusionValueY.value)
-			print "Image Processing speed: %s fps" % (1/cameraLoopTime.value) ## 1/looptime = opencv thread fps
-			print ""
-			print "Object Statistics:"
-			print "Object detected: %s"  % objectDetectValue.value
-			print "Object Radius: %s" % objectRadiusValue.value
-			print "Object Location: x:%s y:%s" % (objectLocationValueX.value, objectLocationValueY.value)
+	lastDisplayUpdate=0
+	updateSpeed=1
+#	try:
+	while(1):
+			if lastDisplayUpdate+updateSpeed < time.time(): ## make sure not to delay the main loop, sure i could use sleep but that's a loss of cycles.... but you allready knew that.
+			#sleep(0.1)
+				lastDisplayUpdate=time.time()
+				print "lastDisplayUpdate: %s next: %s)" % (lastDisplayUpdate, (time.time()+updateSpeed))
+				print "BOT Statistics:"
+				print "Ultrasone distance L:%i cm F:%s cm R:%i cm" % ( int(UltrasoneData[0]), int(UltrasoneData[2]), int(UltrasoneData[1]) )
+				print "Ultrasone samples per second: %s" % ( ( (1/UltrasoneData[3])*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
+				print "Camera Resolution: %sx%s" % (CameraData[0], CameraData[1])
+				print "Image Processing Resolution: %sx%s" % (CameraData[2], CameraData[3])
+				print "Image Processing speed: %s fps" % (1/CameraData[8]) ## 1/looptime = opencv thread fps
+				print ""
+				print "Object Statistics:"
+				print "Object detected: %s"  % CameraData[4]
+				print "Object Radius: %s" % CameraData[5]
+				print "Object Location: x:%s y:%s" % (CameraData[6], CameraData[7])
 			
 
-	except KeyboardInterrupt:
-		print "CTRL+C Shutting down..."
-		sensorThread.join()
+#	except KeyboardInterrupt:
+#		print "CTRL+C Shutting down..."
+#		sensorThread.join()
 
 if __name__ == '__main__':
 	main()

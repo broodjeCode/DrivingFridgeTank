@@ -26,7 +26,7 @@ class cameraThread(Process):
 		pass
 
 
-	def run(self,cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,loopTime):
+	def run(self,CameraData):
 #		try:
 			with picamera.PiCamera() as camera:
 				with picamera.array.PiRGBArray(camera) as stream:
@@ -151,20 +151,29 @@ class cameraThread(Process):
 
 						## publish data to queue
 #						ocvQueue.put([cameraResolution, processingResolution, objectLocation, objectDetected, radius])
-						cameraResolutionValueX.value=cameraResolution[0]
-						cameraResolutionValueY.value=cameraResolution[1]
-						processingResolusionValueX.value=processingResolution[0]
-						processingResolusionValueY.value=processingResolution[1]
-						objectRadiusValue.value=radius
-						objectDetectValue.value=objectDetected
-						objectLocationValueX.value=objectLocation[0]
-						objectLocationValueY.value=objectLocation[1]
+						CameraData[0]=cameraResolution[0]
+						CameraData[1]=cameraResolution[1]
+						CameraData[2]=processingResolution[0]
+						CameraData[3]=processingResolution[1]
+						CameraData[4]=radius
+						CameraData[5]=objectDetected
+						CameraData[6]=objectLocation[0]
+						CameraData[7]=objectLocation[1]
+						#cameraResolutionValueX.value=cameraResolution[0]
+						#cameraResolutionValueY.value=cameraResolution[1]
+						#processingResolusionValueX.value=processingResolution[0]
+						#processingResolusionValueY.value=processingResolution[1]
+						#objectRadiusValue.value=radius
+						#objectDetectValue.value=objectDetected
+						#objectLocationValueX.value=objectLocation[0]
+						#objectLocationValueY.value=objectLocation[1]
 
 						# reset the stream before the next capture
 						stream.seek(0)
 						stream.truncate()
 						self.loopCompletedTime=(time.time() - self.loopStartTime)
-						loopTime.value=self.loopCompletedTime
+						#loopTime.value=self.loopCompletedTime
+						CameraData[8]=self.loopCompletedTime
 					raise Exception('Quit')
 #		except :
 #			print "cameraThread() CTRL+C"

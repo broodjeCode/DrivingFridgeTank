@@ -8,9 +8,8 @@ from multiprocessing import Process
 
 class Ultrasone(Process):
 	def __init__(self, args):
-		self.distanceL=0
+		self.distance=([0,0,0]) ## Empty array for L, F, R sensors
 		self.loopCompletedTime=1
-		self.distanceR=0
                 self.debug=args["sdebug"]
 		GPIO.setmode(GPIO.BOARD)
 		#if left !exist
@@ -33,18 +32,19 @@ class Ultrasone(Process):
 		GPIO.setup(self.ECHO2, GPIO.IN)
 		GPIO.output(self.TRIG2, 0)
 
-	def run(self, mqL, mqR, loopTime):
+	def run(self, UltrasoneData):
 		while True:
 			self.loopStartTime=time.time()  ## save loop speed
-			self.distanceL=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distanceL)
-			self.distanceR=self.PrivGetDist(self.ECHO2, self.TRIG2, self.distanceR)
+			self.distance[0]=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distance[0])
+			self.distance[1]=self.PrivGetDist(self.ECHO2, self.TRIG2, self.distance[1])
 
 			if self.debug:
-				print "Distance: %s cm" % self.distance
-			mqL.value=self.distanceL  #float(self.distance)
-			mqR.value=self.distanceR  # Right sensor
+				print "Distance: %s cm" % str(self.distance)
+			UltrasoneData[0]=self.distance[0]  #float(self.distance)
+			UltrasoneData[1]=self.distance[1]  # Right sensor
 			self.loopCompletedTime=(time.time() - self.loopStartTime) ## calculate loop speed
-			loopTime.value=self.loopCompletedTime
+			UltrasoneData[3]=self.loopCompletedTime
+
 
 
 	## https://github.com/rsc1975/micropython-hcsr04/blob/master/hcsr04.py
