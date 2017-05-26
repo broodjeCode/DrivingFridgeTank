@@ -26,7 +26,7 @@ class cameraThread(Process):
 		pass
 
 
-	def run(self,CameraData):
+	def run(self,CameraDataOut):
 #		try:
 			with picamera.PiCamera() as camera:
 				with picamera.array.PiRGBArray(camera) as stream:
@@ -149,31 +149,22 @@ class cameraThread(Process):
 							if cv2.waitKey(1) & 0xFF == ord('q'):
 								break
 
-						## publish data to queue
-#						ocvQueue.put([cameraResolution, processingResolution, objectLocation, objectDetected, radius])
-						CameraData[0]=cameraResolution[0]
-						CameraData[1]=cameraResolution[1]
-						CameraData[2]=processingResolution[0]
-						CameraData[3]=processingResolution[1]
-						CameraData[4]=radius
-						CameraData[5]=objectDetected
-						CameraData[6]=objectLocation[0]
-						CameraData[7]=objectLocation[1]
-						#cameraResolutionValueX.value=cameraResolution[0]
-						#cameraResolutionValueY.value=cameraResolution[1]
-						#processingResolusionValueX.value=processingResolution[0]
-						#processingResolusionValueY.value=processingResolution[1]
-						#objectRadiusValue.value=radius
-						#objectDetectValue.value=objectDetected
-						#objectLocationValueX.value=objectLocation[0]
-						#objectLocationValueY.value=objectLocation[1]
+						## publish data to arrayOut
+						CameraDataOut[0]=cameraResolution[0]
+						CameraDataOut[1]=cameraResolution[1]
+						CameraDataOut[2]=processingResolution[0]
+						CameraDataOut[3]=processingResolution[1]
+						CameraDataOut[4]=objectDetected
+						CameraDataOut[5]=radius
+						CameraDataOut[6]=objectLocation[0]
+						CameraDataOut[7]=objectLocation[1]
 
 						# reset the stream before the next capture
 						stream.seek(0)
 						stream.truncate()
-						self.loopCompletedTime=(time.time() - self.loopStartTime)
-						#loopTime.value=self.loopCompletedTime
-						CameraData[8]=self.loopCompletedTime
+
+						self.loopCompletedTime=(time.time() - self.loopStartTime) ### Aaaaand we're done.
+						CameraDataOut[8]=self.loopCompletedTime ## publish time to arrayOut
 					raise Exception('Quit')
 #		except :
 #			print "cameraThread() CTRL+C"

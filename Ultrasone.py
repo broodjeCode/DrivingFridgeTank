@@ -34,16 +34,17 @@ class Ultrasone(Process):
 
 	def run(self, UltrasoneData):
 		while True:
-			self.loopStartTime=time.time()  ## save loop speed
-			self.distance[0]=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distance[0])
-			self.distance[1]=self.PrivGetDist(self.ECHO2, self.TRIG2, self.distance[1])
+				self.loopStartTime=time.time()  ## save loop speed
+				self.distance[0]=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distance[0])
+				self.distance[1]=self.PrivGetDist(self.ECHO2, self.TRIG2, self.distance[1])
 
-			if self.debug:
-				print "Distance: %s cm" % str(self.distance)
-			UltrasoneData[0]=self.distance[0]  #float(self.distance)
-			UltrasoneData[1]=self.distance[1]  # Right sensor
-			self.loopCompletedTime=(time.time() - self.loopStartTime) ## calculate loop speed
-			UltrasoneData[3]=self.loopCompletedTime
+				if self.debug:
+					print "Distance: %s cm" % str(self.distance)
+				UltrasoneData[0]=self.distance[0]  #float(self.distance)
+				UltrasoneData[1]=self.distance[1]  # Right sensor
+				UltrasoneData[2]=25.44
+				self.loopCompletedTime=(time.time() - self.loopStartTime) ## calculate loop speed
+				UltrasoneData[3]=self.loopCompletedTime
 
 
 
@@ -67,6 +68,7 @@ class Ultrasone(Process):
 		results = [] #array()
 		
 		while i<3:
+			time.sleep(0.001)
                         i=i+1
 			var = self.getRawData(ECHO, TRIG)
 			if (var >=0 ): # && niet buitengewoon groot of klein na vorige meting?

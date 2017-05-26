@@ -41,7 +41,7 @@ def main():
 	UltrasoneDataOut=Array('f', range(4))
 	CameraDataOut=Array('f', range(9))
 	PerIntelDataIn=Array('f', range(3))
-	PerIntelDataOut=Array('f', range(1))
+	PerIntelDataOut=Array('f', range(3))
 
 	## Initialize and start processes
 
@@ -64,29 +64,35 @@ def main():
 
 
 	lastDisplayUpdate=0
-	updateSpeed=1
+	lastDataUpdate=0
+	displayUpdateSpeed=0.25
+	dataUpdateSpeed=1
 	try:
-		while(1):	## Main loop for basic stuff and data transmissions between threads
+		while True:	## Main loop for basic stuff and data transmissions between threads
 
-			## Data handling/ipc shizzle
-			# PerIntelDataIn:
-			PerIntelDataIn[0]=UltrasoneDataOut[0]
-			PerIntelDataIn[1]=UltrasoneDataOut[1]
-			PerIntelDataIn[2]=UltrasoneDataOut[2]
+			if lastDataUpdate+dataUpdateSpeed < time.time():
+				lastDataUpdate=time.time()
+				print "---DATAUPDATE---"
+				## Data handling/ipc shizzle
+				# PerIntelDataIn:
+				PerIntelDataIn[0]=UltrasoneDataOut[0]
+				PerIntelDataIn[1]=UltrasoneDataOut[1]
+				PerIntelDataIn[2]=UltrasoneDataOut[2]
 
 
 
 
-			if lastDisplayUpdate+updateSpeed < time.time(): ## make sure not to delay the main loop, sure i could use sleep but that's a loss of cycles.... but you allready knew that.
+			if lastDisplayUpdate+displayUpdateSpeed < time.time(): ## make sure not to delay the main loop, sure i could use sleep but that's a loss of cycles.... but you allready knew that.
 			#sleep(0.1)
 				lastDisplayUpdate=time.time()
-				print "lastDisplayUpdate: %s next: %s)" % (lastDisplayUpdate, (time.time()+updateSpeed))
+				print "lastDisplayUpdate: %s next: %s)" % (lastDisplayUpdate, (time.time()+displayUpdateSpeed))
 				print "BOT Statistics:"
 				print "Ultrasone distance L:%i cm F:%s cm R:%i cm" % ( int(UltrasoneDataOut[0]), int(UltrasoneDataOut[2]), int(UltrasoneDataOut[1]) )
 				print "Ultrasone samples per second: %s" % ( ( (1/UltrasoneDataOut[3])*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
 				print "Camera Resolution: %sx%s" % (CameraDataOut[0], CameraDataOut[1])
 				print "Image Processing Resolution: %sx%s" % (CameraDataOut[2], CameraDataOut[3])
 				print "Image Processing speed: %s fps" % (1/CameraDataOut[8]) ## 1/looptime = opencv thread fps
+				print "Obstructions: LEFT:%s FRONT:%s RIGHT:%s" % (PerIntelDataOut[0], PerIntelDataOut[1], PerIntelDataOut[2])
 				print ""
 				print "Object Statistics:"
 				print "Object detected: %s"  % CameraDataOut[4]
