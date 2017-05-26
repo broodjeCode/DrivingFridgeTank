@@ -8,13 +8,14 @@ class PerimeterIntel(Process):
 
 	def run(self, PerIntelDataIn, PerIntelDataOut):
 		while True:
-			sleep(0.1)
-			if self.debug:
-				print "PerIntel: L:%s, F:%s, R:%s" % (PerIntelDataIn[0], PerIntelDataIn[1], PerIntelDataIn[2])
+			time.sleep(0.2)
+#			if self.debug:
+#				print "PerIntel: L:%s, F:%s, R:%s" % (PerIntelDataIn[0], PerIntelDataIn[1], PerIntelDataIn[2])
 				# Check vehicle boundaries
+			i=0
 			for i in range(len(PerIntelDataIn)):
 				if self.debug:
-					print "PerIntel: %s" % PerIntelDataIn[i]
+					print "PerIntel%s: %s" % (i, PerIntelDataIn[i])
 				if i==1:
 					if PerIntelDataIn[i] <= 20:
 						PerIntelDataOut[i]=1

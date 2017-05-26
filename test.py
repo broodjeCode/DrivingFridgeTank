@@ -65,14 +65,14 @@ def main():
 
 	lastDisplayUpdate=0
 	lastDataUpdate=0
-	displayUpdateSpeed=0.25
-	dataUpdateSpeed=1
+	displayUpdateSpeed=0.500
+	dataUpdateSpeed=0.1
 	try:
 		while True:	## Main loop for basic stuff and data transmissions between threads
-
+			time.sleep(0.001) ## don't hog the cpu
 			if lastDataUpdate+dataUpdateSpeed < time.time():
 				lastDataUpdate=time.time()
-				print "---DATAUPDATE---"
+				#print "---DATAUPDATE---"
 				## Data handling/ipc shizzle
 				# PerIntelDataIn:
 				PerIntelDataIn[0]=UltrasoneDataOut[0]
@@ -83,7 +83,6 @@ def main():
 
 
 			if lastDisplayUpdate+displayUpdateSpeed < time.time(): ## make sure not to delay the main loop, sure i could use sleep but that's a loss of cycles.... but you allready knew that.
-			#sleep(0.1)
 				lastDisplayUpdate=time.time()
 				print "lastDisplayUpdate: %s next: %s)" % (lastDisplayUpdate, (time.time()+displayUpdateSpeed))
 				print "BOT Statistics:"
