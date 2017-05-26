@@ -38,7 +38,8 @@ def main():
 	manager = Manager()
 
         ## Define shared Values (for SMP/Threading IPC)
-	distanceValue=Value('f',0)
+	distanceLValue=Value('f',0)
+	distanceRValue=Value('f',0)
 	cameraResolutionValueX=Value('i',0)
 	processingResolusionValueX=Value('i',0)
         cameraResolutionValueY=Value('i',0)
@@ -50,7 +51,7 @@ def main():
 
 	## Initialize and start processes
 	ultra=Ultrasone.Ultrasone(args)
-	sensorThread=Process(target=ultra.run, args=(distanceValue,))
+	sensorThread=Process(target=ultra.run, args=(distanceLValue,distanceRValue,))
 	sensorThread.start()
 	camera=Camera.cameraThread(args)
 	cameraThread=Process(target=camera.run, args=(cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,))
@@ -65,7 +66,7 @@ def main():
 		while(1):
 			sleep(0.1)
 			print "BOT Statistics:"
-			print "Ultrasone distance %s" % distanceValue.value
+			print "Ultrasone distance L:%i cm R:%i cm" % ( int(distanceLValue.value), int(distanceRValue.value) )
 			print "Camera Resolution: %sx%s" % (cameraResolutionValueX.value, cameraResolutionValueY.value)
 			print "Processing Resolution: %sx%s" % (processingResolusionValueX.value, processingResolusionValueY.value)
 			print ""
