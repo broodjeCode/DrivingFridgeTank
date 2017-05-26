@@ -39,7 +39,7 @@ def main():  #link naar argument parser page, uit ball tracking code
 
         ## Init Data arrays for trasferring data over smp threads (somewhat simple IPC)
 	UltrasoneDataOut=Array('f', range(4))
-	CameraDataOut=Array('f', range(9))
+	ImageProcessorDataOut=Array('f', range(9))
 	PerIntelDataIn=Array('f', range(3))
 	PerIntelDataOut=Array('f', range(3))
 
@@ -47,13 +47,13 @@ def main():  #link naar argument parser page, uit ball tracking code
 
 	# UltrasoneThread
 	ultra=Ultrasone.Ultrasone(args)
-	sensorThread=Process(target=ultra.run, args=(UltrasoneDataOut,))
-	sensorThread.start()
+	ultrasoneThread=Process(target=ultra.run, args=(UltrasoneDataOut,))
+	ultrasoneThread.start()
 
 	# CameraThread
-	camera=ImageProcessor.ImageProcessor(args)
-	cameraThread=Process(target=camera.run, args=(CameraDataOut,))
-	cameraThread.start()
+	imageProcessor=ImageProcessor.ImageProcessor(args)
+	imageProcessorThread=Process(target=imageProcessor.run, args=(ImageProcessorDataOut,))
+	imageProcessorThread.start()
 
 	# PerimeterIntelThread
 	perIntel=PerimeterIntel.PerimeterIntel(args)
@@ -92,21 +92,21 @@ def main():  #link naar argument parser page, uit ball tracking code
 				print "BOT Statistics:"
 				print "Ultrasone distance L:%i cm F:%s cm R:%i cm" % ( int(UltrasoneDataOut[0]), int(UltrasoneDataOut[2]), int(UltrasoneDataOut[1]) )
 				print "Ultrasone samples per second: %s" % ( ( (1/UltrasoneDataOut[3])*3 )*2 ) ## 1/looptime *3 (amount of samples per run) *2 (amount of sensors) = samples per second
-				print "Camera Resolution: %sx%s" % (CameraDataOut[0], CameraDataOut[1])
-				print "Image Processing Resolution: %sx%s" % (CameraDataOut[2], CameraDataOut[3])
-				print "Image Processing speed: %s fps" % (1/CameraDataOut[8]) ## 1/looptime = opencv thread fps
+				print "Camera Resolution: %sx%s" % (ImageProcessorDataOut[0], ImageProcessorDataOut[1])
+				print "Image Processing Resolution: %sx%s" % (ImageProcessorDataOut[2], ImageProcessorDataOut[3])
+				print "Image Processing speed: %s fps" % (1/ImageProcessorDataOut[8]) ## 1/looptime = opencv thread fps
 				print "Obstructions: LEFT:%s FRONT:%s RIGHT:%s" % (PerIntelDataOut[0], PerIntelDataOut[1], PerIntelDataOut[2])
 				print ""
 				print "Object Statistics:"
-				print "Object detected: %s"  % CameraDataOut[4]
-				print "Object Radius: %s" % CameraDataOut[5]
-				print "Object Location: x:%s y:%s" % (CameraDataOut[6], CameraDataOut[7])
+				print "Object detected: %s"  % ImageProcessorDataOut[4]
+				print "Object Radius: %s" % ImageProcessorDataOut[5]
+				print "Object Location: x:%s y:%s" % (ImageProcessorDataOut[6], ImageProcessorDataOut[7])
 			
 
 	except KeyboardInterrupt:
 		print "CTRL+C Shutting down..."
 		sensorThread.join()
-		cameraThread.join()
+		imageProcessorThread.join()
 		perIntelThread.join()
 
 if __name__ == '__main__':
