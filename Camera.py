@@ -1,8 +1,7 @@
 import sys
 import os
 from multiprocessing import Process, Queue, Manager
-from time import sleep as sleep
-import time
+import time	
 import numpy as np
 import cv2
 import picamera
@@ -13,6 +12,7 @@ from collections import deque
 
 class cameraThread(Process):
         def __init__(self,args): ## setup Program variables from args (from parents argparser)
+		self.loopCompletedTime=1
                 self.debug=args["cdebug"]
 		self.setdaemon=args["daemon"]
 		self.pwidth=args["pwidth"]
@@ -26,7 +26,7 @@ class cameraThread(Process):
 		pass
 
 
-	def run(self,cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY):
+	def run(self,cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,loopTime):
 #		try:
 			with picamera.PiCamera() as camera:
 				with picamera.array.PiRGBArray(camera) as stream:
@@ -57,6 +57,7 @@ class cameraThread(Process):
 					cv2.createTrackbar(vh, wnd,110,255,self.nothing)
 
 					while True: ## LOOP
+						self.loopStartTime=time.time()
 						## reset empty vars
 						radius=0
 
@@ -162,6 +163,8 @@ class cameraThread(Process):
 						# reset the stream before the next capture
 						stream.seek(0)
 						stream.truncate()
+						self.loopCompletedTime=(time.time() - self.loopStartTime)
+						loopTime.value=self.loopCompletedTime
 					raise Exception('Quit')
 #		except :
 #			print "cameraThread() CTRL+C"

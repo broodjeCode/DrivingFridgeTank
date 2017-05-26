@@ -48,13 +48,15 @@ def main():
 	objectRadiusValue=Value('d',0)
 	objectLocationValueX=Value('i',0)
         objectLocationValueY=Value('i',0)
+	cameraLoopTime=Value('f',1) ## default 1 to prevent float devision by zero (sorry :))
+	ultrasoneLoopTime=Value('f',1)
 
 	## Initialize and start processes
 	ultra=Ultrasone.Ultrasone(args)
-	sensorThread=Process(target=ultra.run, args=(distanceLValue,distanceRValue,))
+	sensorThread=Process(target=ultra.run, args=(distanceLValue,distanceRValue,ultrasoneLoopTime,))
 	sensorThread.start()
 	camera=Camera.cameraThread(args)
-	cameraThread=Process(target=camera.run, args=(cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,))
+	cameraThread=Process(target=camera.run, args=(cameraResolutionValueX,cameraResolutionValueY,processingResolusionValueX,processingResolusionValueY,objectDetectValue,objectRadiusValue,objectLocationValueX,objectLocationValueY,cameraLoopTime,))
 	cameraThread.start()
 
 
@@ -67,8 +69,10 @@ def main():
 			sleep(0.1)
 			print "BOT Statistics:"
 			print "Ultrasone distance L:%i cm R:%i cm" % ( int(distanceLValue.value), int(distanceRValue.value) )
+			print "Ultrasone samples per second: %s" % (((1/ultrasoneLoopTime.value)*5 )*2 )
 			print "Camera Resolution: %sx%s" % (cameraResolutionValueX.value, cameraResolutionValueY.value)
-			print "Processing Resolution: %sx%s" % (processingResolusionValueX.value, processingResolusionValueY.value)
+			print "Image Processing Resolution: %sx%s" % (processingResolusionValueX.value, processingResolusionValueY.value)
+			print "Image Processing speed: %s fps" % (1/cameraLoopTime.value)
 			print ""
 			print "Object Statistics:"
 			print "Object detected: %s"  % objectDetectValue.value
