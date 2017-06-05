@@ -1,4 +1,4 @@
-from multiprocessing import Process, Queue, Manager, Value, Array
+from multiprocessing import Process, Manager, Value, Array
 import time
 import argparse
 
@@ -38,10 +38,14 @@ def main():  #link naar argument parser page, uit ball tracking code
 	time.sleep(2)
 
         ## Init Data arrays for trasferring data over smp threads (somewhat simple IPC)
-	UltrasoneDataOut=Array('f', range(4))
-	ImageProcessorDataOut=Array('f', range(9))
-	PerIntelDataIn=Array('f', range(3))
-	PerIntelDataOut=Array('f', range(3))
+        ## DataManager
+
+        dataManager=Manager() ## Use dataManager so synchronize data objects (basically pass proxies to threads instead of actual arrays, the server is in the parent program)
+
+	UltrasoneDataOut=dataManager.Array('f', range(4))
+	ImageProcessorDataOut=dataManager.Array('f', range(9))
+	PerIntelDataIn=dataManager.Array('f', range(3))
+	PerIntelDataOut=dataManager.Array('f', range(3))
 
 	## Initialize and start processes
 
