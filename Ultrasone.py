@@ -1,3 +1,4 @@
+## Import used python libraries
 import sys
 import os
 import RPi.GPIO as GPIO
@@ -6,6 +7,7 @@ import math
 from array import *
 from multiprocessing import Process
 
+## Main class Ultrasoneto
 class Ultrasone(Process):
 	def __init__(self, args):
 		self.distance=([0,0,0]) ## Empty array for L, F, R sensors
@@ -16,22 +18,34 @@ class Ultrasone(Process):
 
 
 		## Ultrasone pins
+		# Ultrasone LEFT
 		self.TRIG1 = 7
 		self.ECHO1 = 12
 
+		# Ultrasone RIGHT
 		self.TRIG2 = 15
 		self.ECHO2 = 16
-		#else andere pins
 
-		## Setup GPIO
+		# Ultrasone FRONT
+                self.TRIG3 = 0
+                self.ECHO3 = 0
+
+
+		## Setup the GPIO pins
+		# LEFT
 		GPIO.setup(self.TRIG1, GPIO.OUT)
 		GPIO.setup(self.ECHO1, GPIO.IN)
 		GPIO.output(self.TRIG1, 0)
 
+		# RIGHT
 		GPIO.setup(self.TRIG2, GPIO.OUT)
 		GPIO.setup(self.ECHO2, GPIO.IN)
 		GPIO.output(self.TRIG2, 0)
 
+		# FRONT
+
+
+## The loop function that is started from the parent
 	def run(self, UltrasoneData):
 		while True:
 				self.loopStartTime=time.time()  ## save loop speed

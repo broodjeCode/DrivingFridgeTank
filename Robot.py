@@ -13,7 +13,7 @@ def main():
 ## Use argparse to pass options/variables to main process and child processes (Used parts of the code on http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/ as reference for my argument parser)
 	# Add arguments
 	ap = argparse.ArgumentParser()
-	ap.add_argument("-d", "--daemon", help="daemonize program", type=bool, default=False) ## no gui is loaded
+	ap.add_argument("-d", "--daemon", help="daemonize program", type=bool, default=False) ## no gui is loaded, if this is set the program can be run from the commandline without X (headless)
 	ap.add_argument("-D", "--debug", help="Enable general program debugging", type=bool, default=False)
 	ap.add_argument("-DS", "--sdebug", help="Enable sensor debugging", type=bool, default=False)
 	ap.add_argument("-DC", "--cdebug", help="Enable camera debugging", type=bool, default=False)
