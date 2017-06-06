@@ -48,7 +48,7 @@ def main():
 	UltrasoneDataOut=dataManager.Array('f', range(7))
 	ImageProcessorDataOut=dataManager.Array('f', range(9))
 	PerIntelDataIn=dataManager.Array('f', range(4))
-	PerIntelDataOut=dataManager.Array('f', range(3))
+	PerIntelDataOut=dataManager.Array('f', range(4))
 
 ## Initialize and start processes
 	# UltrasoneThread
