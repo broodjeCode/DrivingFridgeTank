@@ -58,8 +58,7 @@ class Ultrasone(Process):
 			if self.debug:
 				print "Distance: %s cm" % str(self.distance)
 
-			UltrasoneData[0]=self.distance[0]
-	#float(self.distance)
+			UltrasoneData[0]=self.distance[0]	#float(self.distance)
 			UltrasoneData[1]=25.44			# Hardcoded for now, I only have two sensors now. This will use self.distance[2] in the future
 			UltrasoneData[2]=self.distance[1]  	# Right sensor
 			self.loopCompletedTime=(time.time() - self.loopStartTime) ## calculate loop speed for debugging and calculating how many samples per second we took.
