@@ -15,9 +15,9 @@ from collections import deque
 class ImageProcessor(Process):
         def __init__(self,args):
 
-## setup Program variables from args (from parents argparser)
+## Setup program variables from args (from parents argparser)
 		self.loopCompletedTime=1
-                self.debug=args["cdebug"]
+        self.debug=args["cdebug"]
 		self.setdaemon=args["daemon"]
 		self.pwidth=args["pwidth"]
 		self.pheight=args["pheight"]

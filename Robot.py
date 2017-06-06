@@ -14,7 +14,7 @@ def main():
 	# Add arguments
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-d", "--daemon", help="daemonize program", type=bool, default=False) ## no gui is loaded, if this is set the program can be run from the commandline without X (headless)
-	ap.add_argument("-D", "--debug", help="Enable general program debugging", type=bool, default=False)
+	ap.add_argument("-D", "--debug", help="Enable general program debugging", type=bool, default=False) 
 	ap.add_argument("-DS", "--sdebug", help="Enable sensor debugging", type=bool, default=False)
 	ap.add_argument("-DC", "--cdebug", help="Enable camera debugging", type=bool, default=False)
 	ap.add_argument("-cw", "--cwidth", help="Camera Resolution width", type=int, default=320)
@@ -76,10 +76,10 @@ def main():
         # Update data proxies every 10ms
 	dataUpdateSpeed=0.01
 
-## Here starts the main loop
+## Main loop
 	try:
 		while True: ## Main loop for displaying statistics and data handling transmissions between threads
-			time.sleep(0.001) ## don't hog the cpu (atleast set some sort of limit to prevent the CPU from flooding with the while True loop
+			time.sleep(0.001) ## avoiding flooding the CPU with the while loop
 
 			# dataManager - if lastDateUpdate is lower than current epoch time, then update data values. This must happen often but not continuesly.
 			if lastDataUpdate+dataUpdateSpeed < time.time():
@@ -123,6 +123,6 @@ def main():
 		imageProcessorThread.join()
 		perIntelThread.join()
 
-## If I'm started execute main() and let the magick begin.
+## If I'm started execute main() and let the magic begin.
 if __name__ == '__main__':
 	main()
