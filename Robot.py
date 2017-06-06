@@ -45,10 +45,10 @@ def main():
         dataManager=Manager() ## Use Manager from multiprocessing to synchronize data objects (basically pass proxies to threads instead of actual arrays, the server is in the parent program)
 
         # Array objects, used for transporting data using proxies to communicate between threads (IPC part)
-	UltrasoneDataOut=dataManager.Array('f', range(7))
+	UltrasoneDataOut=dataManager.Array('f', range(4))
 	ImageProcessorDataOut=dataManager.Array('f', range(9))
-	PerIntelDataIn=dataManager.Array('f', range(4))
-	PerIntelDataOut=dataManager.Array('f', range(4))
+	PerIntelDataIn=dataManager.Array('f', range(7))
+	PerIntelDataOut=dataManager.Array('f', range(7))
 
 ## Initialize and start processes
 	# UltrasoneThread
