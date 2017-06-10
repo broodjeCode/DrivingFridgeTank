@@ -11,7 +11,7 @@ import imutils
 from collections import deque
 
 
-## Welcome to the main class
+## Define class
 class ImageProcessor(Process):
         def __init__(self,args):
 
@@ -30,9 +30,23 @@ class ImageProcessor(Process):
 	def nothing(self,na):
 		pass
 
-## This is the main function called from Robot.py to start the ImageProcessorThread and let it do it's thing.
+
+## Om de gewenste functionaliteiten te genereren zijn verschillende bronnen samengevoegd tot een geheel.
+
+## Basic camera functions like frame capture
+## Bron1: https://raspberrypi.stackexchange.com/questions/24262/getting-image-data-from-raspberry-pi-camera-module-in-opencv-with-python1
+
+## HSV Sliders
+## Bron 2: https:// botforge.wordpress.com/2016/07/02/basic-color-tracker-using-opencv-python/
+
+## OpenCV functions like masking etc.
+## Bron 3: http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
+
+
+## This is the main function called from Robot.py to start the ImageProcessorThread.
 	def run(self,CameraDataOut):
 		with picamera.PiCamera() as camera: # Use camera
+
 			with picamera.array.PiRGBArray(camera) as stream: # Define stream as RGBArray
 
 ## Setup camera and other program settings
@@ -45,6 +59,10 @@ class ImageProcessor(Process):
 				daemon=self.setdaemon
 				debug=self.cdebug
 				pts = deque(maxlen=self.buffer)
+
+
+				## HSV sliders code copied from:
+				
 
 				# create window colorbars, we use this to debug/adjust object HSV color matching
 				cv2.namedWindow('Colorbars')
@@ -69,10 +87,10 @@ class ImageProcessor(Process):
 					# Define the startime so we can calculate processed FPS
 					self.loopStartTime=time.time()
 
-					# Reset empty vars
+					# Define var at 0
 					radius=0
 
-					# Set values from colorbars that we created above
+					# Set values real-time from colorbars that we created above
 					hul=cv2.getTrackbarPos(hl, wnd)
 					huh=cv2.getTrackbarPos(hh, wnd)
 					sal=cv2.getTrackbarPos(sl, wnd)
@@ -85,10 +103,10 @@ class ImageProcessor(Process):
 					# Capture frame from camera stream
 					camera.capture(stream, 'bgr', use_video_port=True)
 
-					# stream.array now contains the image data in BGR order
+					# stream.array now contains the image data in BGR order (one frame)
 					frame = stream.array
 
-					# Resize the image to the desired processing resolution
+					# Resize the image to the desired processing resolution ()
 					frame = imutils.resize(frame, width=self.pwidth, height=self.pheight)
 
 					# Apply a blur to reduce the noise, this will improve object tracking and reduce false detections
@@ -107,8 +125,10 @@ class ImageProcessor(Process):
 						if cv2.waitKey(1) & 0xFF == ord('q'):
 							break
 
-					# Some processing to make a black/white picture with the detection, mask
+					# Some processing to make a black/white picture with the detection mask.
+					#Apply mask
 					mask = cv2.inRange(hsv, HSVLOW, HSVHIGH)
+					#Erode & dialate to remove artifacts
 					mask = cv2.erode(mask, None, iterations=2)
 					mask = cv2.dilate(mask, None, iterations=2)
 
@@ -118,7 +138,7 @@ class ImageProcessor(Process):
 						if cv2.waitKey(1) & 0xFF == ord('q'):
 							break
 
-					# Count the detected countours within mask (image)
+					# Count the detected countours within mask to find center coordinates
 					cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 					cv2.CHAIN_APPROX_SIMPLE)[-2]
 					center = None
@@ -144,6 +164,12 @@ class ImageProcessor(Process):
 					# Object is not insight.
 						objectDetected=False
 						center=(0,0)
+
+
+
+
+
+						
 
 					# Add points for red tracer (only used when debugging is enabled
 					pts.appendleft(center)

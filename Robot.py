@@ -10,10 +10,10 @@ pName="DrivingFridgeRobot"
 pVersion="0.2"
 
 def main():  
-## Use argparse to pass options/variables to main process and child processes (Used parts of the code on http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/ as reference for my argument parser)
-	# Add arguments
+## Use argparse to pass options/variables to main process and child processes (Used parts of the code on http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/ as reference for the argument parser)
+	# Add default arguments
 	ap = argparse.ArgumentParser()
-	ap.add_argument("-d", "--daemon", help="daemonize program", type=bool, default=False) ## no gui is loaded, if this is set the program can be run from the commandline without X (headless)
+	ap.add_argument("-d", "--daemon", help="daemonize program", type=bool, default=False) ## no gui is loaded, if this is set the program can be run from the commandline without X
 	ap.add_argument("-D", "--debug", help="Enable general program debugging", type=bool, default=False) 
 	ap.add_argument("-DS", "--sdebug", help="Enable sensor debugging", type=bool, default=False)
 	ap.add_argument("-DC", "--cdebug", help="Enable camera debugging", type=bool, default=False)
@@ -24,7 +24,7 @@ def main():
 	ap.add_argument("-b", "--buffer", help="tracing buffer (red line in gui tracing object)", type=int, default=64)
 	args=vars(ap.parse_args())
 
-	# Print settings on startup
+	# Print settings (arguments) on startup
 	print "Starting %s %s" % (str(pName), str(pVersion))
 	print "-=====[ Options ]=====-"
 	print "--daemon:    %s" % str(args["daemon"])
@@ -37,11 +37,11 @@ def main():
 	print "--pheight:   %s" % str(args["pheight"])
 	print "--buffer:    %s" % str(args["buffer"])
 
-	# Give us some time to actually read the arguments before the program starts
+	# Read print
 	time.sleep(2)
 
 ## Init Data arrays for trasferring data over smp threads (somewhat simple IPC)
-        # DataManager
+        # Init dataManager
         dataManager=Manager() ## Use Manager from multiprocessing to synchronize data objects (basically pass proxies to threads instead of actual arrays, the server is in the parent program)
 
         # Array objects, used for transporting data using proxies to communicate between threads (IPC part)
@@ -81,7 +81,7 @@ def main():
 		while True: ## Main loop for displaying statistics and data handling transmissions between threads
 			time.sleep(0.001) ## avoiding flooding the CPU with the while loop
 
-			# dataManager - if lastDateUpdate is lower than current epoch time, then update data values. This must happen often but not continuesly.
+			# Datahandler - Will fire directly and everytime lastDataUpdate + 0.01 us is lower then curent epoch time..
 			if lastDataUpdate+dataUpdateSpeed < time.time():
 				# Get current epoch time in us
 				lastDataUpdate=time.time()

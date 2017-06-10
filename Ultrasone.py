@@ -13,6 +13,9 @@ class Ultrasone(Process):
 		self.distance=([0,0,0]) ## Empty array for L, F, R sensors
 		self.loopCompletedTime=1
                 self.debug=args["sdebug"]
+
+        ## Ultrasone init from source: https://www.modmypi.com/blog/hc-sr04-ultrasonic-range-sensor-on-the-raspberry-pi
+
 		GPIO.setmode(GPIO.BOARD)
 		#if left !exist
 
@@ -66,25 +69,7 @@ class Ultrasone(Process):
 
 
 
-	## https://github.com/rsc1975/micropython-hcsr04/blob/master/hcsr04.py
-	## https://github.com/micropython/micropython/blob/f2d732f4596064b3257abe571dc14ab61e02dec9/extmod/machine_pulse.c
- 
-## This function is responsible for reading the results after a pulse to the Ultrasone sensor but keeps a timeout so that the program won't stall, this happened with the first experiments with the Ultrasone sensor. Code from micropython was used as inspiration for the timeout issues we had during testing.
-	def get_pulse_time(self, pin, pinLevel, timeout):
-		# Log start time, used for comparing timeout
-                start=time.time()
 
-		# check if the gpio pin changes level from initial pinLevel. Try until timeout (us) is reached.
-                while GPIO.input(pin) != pinLevel:
-                        if (time.time() - start) >= timeout:
-                                return -2 # Ok, timeout reached, exit function with -2 returncode.
-                start=time.time() # Ok, so we detected a change in the pinLevel, log start time and continue
-
-		# check if the gpio pin changes level to the opposite of the function above. Try until timeout (us) is reached.
-                while GPIO.input(pin) == pinLevel:
-                        if (time.time() - start) >= timeout:
-                                return -1 # Ok, timeout reached, exit function with -1 returncode.
-                return (time.time() - start) # return (time.time() - start), this is the time it took to receive a valid response from the sensor and is used to calculate the distance.
 
 ## (private) function to fetch the ultrasone pulse and calculate the distance. If the distance is invalid, it will use the previous recorded value. This function is called with ECHO and TRIG as variables to choose the sensor (multisensor capable, ofcourse).
 	def PrivGetDist(self, ECHO, TRIG, previousValue):
@@ -114,6 +99,9 @@ class Ultrasone(Process):
 		else:
 			return previousValue # Return previous value
 
+
+
+
 ## This function is used to activate the trigger and then use get_pulse_time to get the time it took to receive the echo, including a timeout to recover from a failed reading.
 	def getRawData(self, ECHO, TRIG): # ECHO and TRIG pins are dynamic to allow multiple readings from multiple sensors with one function.
                 GPIO.output(TRIG, 1) # Reset the Ultrasone sensor.
@@ -122,3 +110,26 @@ class Ultrasone(Process):
        		pulse_time = self.get_pulse_time(ECHO, 1, 0.010) # Get the time it took for the pulse to echo on the surrounding area.
 
 		return str(pulse_time) # Return the data from Ultrasone.
+
+
+
+
+	## https://github.com/rsc1975/micropython-hcsr04/blob/master/hcsr04.py
+	## https://github.com/micropython/micropython/blob/f2d732f4596064b3257abe571dc14ab61e02dec9/extmod/machine_pulse.c
+ 
+## This function is responsible for reading the results after a pulse to the Ultrasone sensor but keeps a timeout so that the program won't stall, this happened with the first experiments with the Ultrasone sensor. Code from micropython was used as inspiration for the timeout issues we had during testing.
+	def get_pulse_time(self, pin, pinLevel, timeout):
+		# Log start time, used for comparing timeout
+                start=time.time()
+
+		# check if the gpio pin changes level from initial pinLevel. Try until timeout (us) is reached.
+                while GPIO.input(pin) != pinLevel:
+                        if (time.time() - start) >= timeout:
+                                return -2 # Ok, timeout reached, exit function with -2 returncode.
+                start=time.time() # Ok, so we detected a change in the pinLevel, log start time and continue
+
+		# check if the gpio pin changes level to the opposite of the function above. Try until timeout (us) is reached.
+                while GPIO.input(pin) == pinLevel:
+                        if (time.time() - start) >= timeout:
+                                return -1 # Ok, timeout reached, exit function with -1 returncode.
+                return (time.time() - start) # return (time.time() - start), this is the time it took to receive a valid response from the sensor and is used to calculate the distance.
