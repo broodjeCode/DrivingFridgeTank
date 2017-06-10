@@ -1,14 +1,10 @@
+## Used for installing and testing opencv
+http://www.pyimagesearch.com/2015/02/23/install-opencv-and-python-on-your-raspberry-pi-2-and-b/
 https://raspberrypi.stackexchange.com/questions/24262/getting-image-data-from-raspberry-pi-camera-module-in-opencv-with-python
 http://stackoverflow.com/questions/27950013/i-am-trying-make-the-raspberry-pi-camera-work-with-opencv
 
 ## Object tracking based on color to hsv conversion
 http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
-
-http://stackoverflow.com/questions/20698613/detect-semi-circle-in-opencv
-http://stackoverflow.com/questions/26254287/houghcircles-circle-detection-using-opencv-and-python
-http://www.pyimagesearch.com/2014/07/21/detecting-circles-images-using-opencv-hough-circles/
-http://www.pyimagesearch.com/2015/02/23/install-opencv-and-python-on-your-raspberry-pi-2-and-b/
-
 
 ## HSV Sliders / handling code
 https://botforge.wordpress.com/2016/07/02/basic-color-tracker-using-opencv-python/
@@ -21,3 +17,10 @@ https://www.modmypi.com/blog/hc-sr04-ultrasonic-range-sensor-on-the-raspberry-pi
 
 ## Ultrasone timeout issue rewrite timing function
 https://github.com/rsc1975/micropython-hcsr04/blob/master/hcsr04.py
+
+
+## Not used in the end, switched from hough detection to hsv color detection
+http://stackoverflow.com/questions/20698613/detect-semi-circle-in-opencv
+http://stackoverflow.com/questions/26254287/houghcircles-circle-detection-using-opencv-and-python
+http://www.pyimagesearch.com/2014/07/21/detecting-circles-images-using-opencv-hough-circles/
+
