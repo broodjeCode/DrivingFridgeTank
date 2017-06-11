@@ -52,7 +52,7 @@ class Ultrasone(Process):
 
 
 ## The loop function that is started from the parent
-	def run(self, UltrasoneData): # This function is called from Robot.py to start the Ultrasone thread.
+	def run(self, UltrasoneDataOut): # This function is called from Robot.py to start the Ultrasone thread.
 		while True:
 			self.loopStartTime=time.time() ## save loop time for speed
 			self.distance[0]=self.PrivGetDist(self.ECHO1, self.TRIG1, self.distance[0]) # get sensor 1 distance
@@ -61,11 +61,11 @@ class Ultrasone(Process):
 			if self.debug:
 				print "Distance: %s cm" % str(self.distance)
 
-			UltrasoneData[0]=self.distance[0]	#float(self.distance)
-			UltrasoneData[1]=25.44			# Hardcoded for now, I only have two sensors now. This will use self.distance[2] in the future
-			UltrasoneData[2]=self.distance[1]  	# Right sensor
+			UltrasoneDataOut[0]=self.distance[0]	#float(self.distance)
+			UltrasoneDataOut[1]=25.44			# Hardcoded for now, I only have two sensors now. This will use self.distance[2] in the future
+			UltrasoneDataOut[2]=self.distance[1]  	# Right sensor
 			self.loopCompletedTime=(time.time() - self.loopStartTime) ## calculate loop speed for debugging and calculating how many samples per second we took.
-			UltrasoneData[3]=self.loopCompletedTime	# Store the looptime
+			UltrasoneDataOut[3]=self.loopCompletedTime	# Store the looptime
 
 
 
